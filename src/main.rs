@@ -85,31 +85,27 @@ fn main() {
                     submatches.get_one::<PathBuf>("from-yaml"),
                     submatches.get_one::<PathBuf>("from-json"),
                 );
+                let mut command: Command;
                 match (self_flag, from_toml, from_yaml, from_json) {
                     (true, _, _, _) => {
-                        let mut cmd = build_cli();
-                        eprintln!("Generating completion file for {generator}...");
-                        print_completions(generator, &mut cmd);
+                        command = build_cli();
                     }
                     (_, Some(from_toml), _, _) => {
-                        let mut command = parse_toml(from_toml.to_path_buf()).unwrap();
-                        print_completions(generator, &mut command);
+                        command = parse_toml(from_toml.clone()).expect("failed");
                     }
                     (_, _, Some(from_yaml), _) => {
-                        let mut command = parse_yaml(from_yaml.to_path_buf()).unwrap();
-                        print_completions(generator, &mut command);
+                        command = parse_yaml(from_yaml.clone()).expect("failed");
                     }
                     (_, _, _, Some(from_json)) => {
-                        let mut command = parse_json(from_json.to_path_buf()).unwrap();
-                        print_completions(generator, &mut command);
+                        command = parse_json(from_json.clone()).expect("failed");
                     }
                     _ => unreachable!(),
                 }
+                print_completions(generator, &mut command);
             }
         }
         None => {
-            let _ = build_cli().print_help();
-            ()
+            _ = build_cli().print_help();
         }
         _ => unreachable!(),
     }
