@@ -1,0 +1,19 @@
+name: app_clap_serde
+version : "1.0"
+about : yaml_support!
+author : yaml_supporter
+
+args:
+    - apple : 
+        short: a
+    - banana:
+        short: b
+        long: banana
+        aliases :
+            - musa_spp
+
+subcommands:
+    - sub1: 
+        about : subcommand_1
+    - sub2: 
+        about : subcommand_2

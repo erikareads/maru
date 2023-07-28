@@ -1,0 +1,11 @@
+name = "app_clap_serde"
+version = "1.0"
+author = "toml_tester"
+about = "test-clap-serde"
+[subcommands]
+sub1 = { about = "subcommand_1" }
+[subcommands.sub2]
+about = "subcommand_2"
+[args]
+apple = { short = "a" }
+banana = { short = "b", long = "banana", aliases = ["musa_spp"] }
