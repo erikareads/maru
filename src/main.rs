@@ -1,11 +1,11 @@
 use clap::{value_parser, Arg, ArgAction, ArgGroup, Command};
 use clap_complete::{generate, Generator, Shell};
 
+use serde_json;
 use std::error::Error;
 use std::fs::read_to_string;
 use std::io;
 use std::path::PathBuf;
-use serde_json;
 
 fn build_cli() -> Command {
     Command::new("maru").subcommand(
@@ -47,21 +47,33 @@ fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
 }
 
 enum SerializedFormat {
-  YAML,
-  JSON,
-  TOML,
+    YAML,
+    JSON,
+    TOML,
 }
 
 fn parse(path: PathBuf, format: SerializedFormat) -> Result<Command, Box<dyn Error>> {
-  let serialized_data = read_to_string(path)?;
+    let serialized_data = read_to_string(path)?;
 
-  let command: Command = match format {
-    SerializedFormat::YAML => serde_yaml::from_str::<clap_serde::CommandWrap>(serialized_data.as_str()).expect("parse failed").into(),
-    SerializedFormat::JSON => serde_json::from_str::<clap_serde::CommandWrap>(serialized_data.as_str()).expect("parse failed").into(),
-    SerializedFormat::TOML => toml::from_str::<clap_serde::CommandWrap>(serialized_data.as_str()).expect("parse failed").into(),
-  };
+    let command: Command = match format {
+        SerializedFormat::YAML => {
+            serde_yaml::from_str::<clap_serde::CommandWrap>(serialized_data.as_str())
+                .expect("parse failed")
+                .into()
+        }
+        SerializedFormat::JSON => {
+            serde_json::from_str::<clap_serde::CommandWrap>(serialized_data.as_str())
+                .expect("parse failed")
+                .into()
+        }
+        SerializedFormat::TOML => {
+            toml::from_str::<clap_serde::CommandWrap>(serialized_data.as_str())
+                .expect("parse failed")
+                .into()
+        }
+    };
 
-  Ok(command)
+    Ok(command)
 }
 
 fn main() {
