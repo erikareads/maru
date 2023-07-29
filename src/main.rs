@@ -5,6 +5,7 @@ use std::error::Error;
 use std::fs::read_to_string;
 use std::io;
 use std::path::PathBuf;
+use serde_json;
 
 fn build_cli() -> Command {
     Command::new("maru").subcommand(
@@ -45,32 +46,22 @@ fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
     generate(gen, cmd, cmd.get_name().to_string(), &mut io::stdout());
 }
 
-fn parse_toml(path: PathBuf) -> Result<Command, Box<dyn Error>> {
-    let my_toml = read_to_string(path)?;
-
-    let app: clap::Command = toml::from_str::<clap_serde::CommandWrap>(my_toml.as_str())
-        .expect("parse failed")
-        .into();
-
-    Ok(app)
+enum SerializedFormat {
+  YAML,
+  JSON,
+  TOML,
 }
-fn parse_json(path: PathBuf) -> Result<Command, Box<dyn Error>> {
-    let my_json = read_to_string(path)?;
 
-    let app: clap::Command = serde_json::from_str::<clap_serde::CommandWrap>(my_json.as_str())
-        .expect("parse failed")
-        .into();
+fn parse(path: PathBuf, format: SerializedFormat) -> Result<Command, Box<dyn Error>> {
+  let serialized_data = read_to_string(path)?;
 
-    Ok(app)
-}
-fn parse_yaml(path: PathBuf) -> Result<Command, Box<dyn Error>> {
-    let my_yaml = read_to_string(path)?;
+  let command: Command = match format {
+    SerializedFormat::YAML => serde_yaml::from_str::<clap_serde::CommandWrap>(serialized_data.as_str()).expect("parse failed").into(),
+    SerializedFormat::JSON => serde_json::from_str::<clap_serde::CommandWrap>(serialized_data.as_str()).expect("parse failed").into(),
+    SerializedFormat::TOML => toml::from_str::<clap_serde::CommandWrap>(serialized_data.as_str()).expect("parse failed").into(),
+  };
 
-    let app: clap::Command = serde_yaml::from_str::<clap_serde::CommandWrap>(my_yaml.as_str())
-        .expect("parse failed")
-        .into();
-
-    Ok(app)
+  Ok(command)
 }
 
 fn main() {
@@ -91,13 +82,13 @@ fn main() {
                         command = build_cli();
                     }
                     (_, Some(from_toml), _, _) => {
-                        command = parse_toml(from_toml.clone()).expect("failed");
+                        command = parse(from_toml.clone(), SerializedFormat::TOML).expect("failed");
                     }
                     (_, _, Some(from_yaml), _) => {
-                        command = parse_yaml(from_yaml.clone()).expect("failed");
+                        command = parse(from_yaml.clone(), SerializedFormat::YAML).expect("failed");
                     }
                     (_, _, _, Some(from_json)) => {
-                        command = parse_json(from_json.clone()).expect("failed");
+                        command = parse(from_json.clone(), SerializedFormat::JSON).expect("failed");
                     }
                     _ => unreachable!(),
                 }
