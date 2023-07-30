@@ -2,6 +2,8 @@
 
 `maru` is a shell completions generator.
 
+![Mascot Image](/assets/maru-mascot.jpg)
+
 `maru` is designed to take a serialized specification of a command line interface, and generate shell completions for that interface for a specified shell.
 
 ![Formats Interchange Diagram](/assets/maru-formats-diagram.png)
@@ -20,3 +22,6 @@
 - Powershell
 - Elvish
 
+## Special Thanks
+
+Thanks to Jeff Miller @jmeowmeow for drawing the mascot image.
