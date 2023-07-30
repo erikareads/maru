@@ -2,7 +2,7 @@
 
 `maru` is a shell completions generator.
 
-<p align="center">
+<p>
 <img height="250" src="/assets/maru-mascot.jpg" alt="Mascot Image"/>
 </p>
 
