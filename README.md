@@ -26,4 +26,4 @@
 
 ## Special Thanks
 
-Thanks to Jeff Miller @jmeowmeow for drawing the mascot image.
+Thanks to Jeff Miller [@jmeowmeow](https://github.com/jmeowmeow) for drawing the mascot image.
