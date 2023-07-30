@@ -2,7 +2,9 @@
 
 `maru` is a shell completions generator.
 
-![Mascot Image](/assets/maru-mascot.jpg)
+<p align="center">
+<img height="250" src="/assets/maru-mascot.jpg" alt="Mascot Image"/>
+</p>
 
 `maru` is designed to take a serialized specification of a command line interface, and generate shell completions for that interface for a specified shell.
 
