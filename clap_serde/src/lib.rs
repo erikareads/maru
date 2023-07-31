@@ -47,11 +47,11 @@ impl<'de> Visitor<'de> for CommandVisitor {
         let mut command = self.0;
         while let Some(key) = map.next_key::<&str>()? {
             command = match key {
-                "after_help" => <Command>::after_help(command, map.next_value::<String>()?),
-                "about" => <Command>::about(command, map.next_value::<String>()?),
-                "author" => <Command>::author(command, map.next_value::<String>()?),
-                "name" => <Command>::name(command, map.next_value::<String>()?),
-                "version" => <Command>::version(command, map.next_value::<String>()?),
+                "after_help" => command.after_help(map.next_value::<String>()?),
+                "about" => command.about(map.next_value::<String>()?),
+                "author" => command.author(map.next_value::<String>()?),
+                "name" => command.name(map.next_value::<String>()?),
+                "version" => command.version(map.next_value::<String>()?),
                 "subcommands" => map.next_value_seed(SubCommands(command))?,
                 "args" => map.next_value_seed(Args(command))?,
                 unknown => return Err(Error::unknown_field(unknown, &["after_help"])),
@@ -280,10 +280,9 @@ impl<'de> Visitor<'de> for ArgVisitor {
         let mut arg: clap::Arg = self.0;
         while let Some(key) = map.next_key::<&str>()? {
             arg = match key {
-                // "short" => <Arg>::short(arg, map.next_value::<char>()?),
                 "short" => arg.short(map.next_value::<char>()?),
-                "long" => <Arg>::long(arg, map.next_value::<String>()?),
-                "aliases" => <Arg>::aliases(arg, map.next_value::<Vec<String>>()?),
+                "long" => arg.long(map.next_value::<String>()?),
+                "aliases" => arg.aliases(map.next_value::<Vec<String>>()?),
                 unknown => return Err(Error::unknown_field(unknown, &["after_help"])),
             };
         }
